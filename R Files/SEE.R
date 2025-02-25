@@ -21,6 +21,7 @@ arg1 <- "medA"
 par(mfrow = c(1, 2))
 See <- function(arg1) {
   C09CA01 <- tidy[which(tidy$ATC == arg1), ]
+  
   # Take a random sequence of consecutive prescription in the dataset
   Drug_see_p0 <- C09CA01
   Drug_see_p1 <- C09CA01
@@ -47,38 +48,14 @@ See <- function(arg1) {
   dfper <- dfper[which(dfper$y <= 0.8), ] # Remove the upper 20%? Should this be >=0.8?
   max(dfper$x)
   par(mfrow = c(1, 2))
-  png(paste("ECDF_", arg1, ".png"))
+  # png(paste("ECDF_", arg1, ".png"))
   plot(dfper$x, dfper$y, main = "80% ECDF") # Oh that’s why its <=0.8
   dev.off()
-
-  # Plot the 100% ECDF
-  png(paste("ECDF_", arg1, "_100.png"))
-  plot(x, y, main = "100% ECDF")
-  dev.off()
-  m1 <- table(Drug_see_p1$pnr)
-
-  # Histogram
-  png(paste("Histogram_", arg1, ".png"))
-  plot(m1)
-  dev.off()
-  ni <- max(dfper$x)
-  Drug_see_p2 <- Drug_see_p1[which(Drug_see_p1$event.interval <= ni), ]
-  d <- density(log(as.numeric(Drug_see_p2$event.interval)))
-
-  # Density Plot
-  png(paste("Density_", arg1, ".png"))
-  plot(d, main = "Log(event interval)")
-  dev.off()
-  x1 <- d$x
-  y1 <- d$y
-  z1 <- max(x1)
-  a <- data.table(x = x1, y = y1)
-  a <- scale(a)
 
   # Silhouette Score
   set.seed(1234) # for reproducibility
   a2 <- fviz_nbclust(a, kmeans, method = "silhouette") + labs(subtitle = "Silhouette Analysis")
-  png(paste("Silhouette_", arg1, ".png"))
+  # png(paste("Silhouette_", arg1, ".png"))
   plot(a2)
   dev.off()
   max_cluster <- a2$data
@@ -166,12 +143,9 @@ see_assumption <- function(arg1) {
     geom_hline(yintercept = as.numeric(medians_of_medians$median_duration), linetype = "dashed", color = "red") + # Horizontal line
     theme_bw()
   
-  print("DONEEE")
+  print("FIN")
   return(pp)
 }
-
-
-
 
 medA <- See("medA")
 # arg1 <- medA
@@ -180,11 +154,3 @@ print("Calling see_assumption")
 
 seeA <- see_assumption(medA)
 seeB <- see_assumption(medB)
-
-png("seeA.png")
-plot(seeA)
-dev.off()
-
-png("seeB.png")
-plot(seeB)
-dev.off()
